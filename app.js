@@ -3,6 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
+const encrypt = require("mongoose-encryption");
 const { Collection } = require("mongodb");
 
 
@@ -17,11 +18,14 @@ app.use(express.static("public"));
 // connecting mongoose and database name
 mongoose.connect("mongodb://localhost:27017/userDB");
 
-// Schema (js object)
-const userSchema = {
+// Schema 
+const userSchema = new mongoose.Schema ({
     email: String,
     password: String
-};
+});
+
+const secret = "Fullstack";
+userSchema.plugin(encrypt, { secret: secret, encryptedFields: ["password"] });
 
 // creating model and specifying Collection
 const User = new mongoose.model("User", userSchema);
@@ -77,4 +81,6 @@ app.post("/login", function(req, res){
 app.listen(3000, function(){
     console.log("Server started in Port number 3000");
 });
+
+
 
